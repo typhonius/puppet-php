@@ -7,7 +7,7 @@
 # to match your setup
 #
 upstream <%= @server_name %> {
- server unix:<%= scope.lookupvar "boxen::config::socketdir" %>/<%= @name %>;
+  server unix:<%= scope.lookupvar "boxen::config::socketdir" %>/<%= @name %>;
 }
 
 server {
