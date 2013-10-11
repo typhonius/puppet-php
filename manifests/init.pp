@@ -6,37 +6,54 @@
 #
 #     include php
 #
-class php {
-  require php::config
-  require homebrew
-  include wget
-  include autoconf
-  include libtool
-  include pkgconfig
-  include pcre
-  include libpng
+class php(
+  $phpenv_version    = $php::params::phpenv_version,
+  $phpenv_root       = $php::params::phpenv_root,
+  $user              = $php::params::user,
+  $phpenv_pluginsdir = $php::params::phpenv_pluginsdir,
+  $logdir            = $php::params::logdir,
+  $configdir         = $php::params::configdir,
+  $datadir           = $php::params::datadir,
+  $cachedir          = $php::params::cachedir,
+  $extensioncachedir = $php::params::extensioncachedir
+) inherits php::params {
 
-  # Get rid of any pre-installed packages
-  package { ['phpenv', 'php-build']: ensure => absent; }
+  if $::osfamily == 'Darwin' {
+    include boxen::config
 
-  $phpenv_version = '6499bb6c7b645af3f4e67f7e17708d5ee208453f' # Pin to latest version of dev branch as of 2013-10-11
+    file { "${boxen::config::envdir}/phpenv.sh":
+      source => 'puppet:///modules/php/phpenv.sh' ;
+    }
+  }
+
+  repository { $phpenv_root:
+    ensure => $phpenv_version,
+    source => 'phpenv/phpenv',
+    user   => $user
+  }
+
+  # Cache the PHP src repository we'll need this for extensions
+  # and at some point building versions #todo
+  repository { "${phpenv_root}/php-src":
+    source => 'php/php-src',
+    user   => $user
+  }
 
   file {
     [
-      $php::config::root,
-      $php::config::logdir,
-      $php::config::datadir,
-      $php::config::pluginsdir,
-      $php::config::cachedir,
-      $php::config::extensioncachedir,
+      $logdir,
+      $datadir,
+      $cachedir,
+      $extensioncachedir,
     ]:
-    ensure => directory
+    ensure  => directory,
+    require => Repository[$phpenv_root]
   }
 
   # Ensure we only have config files managed by Boxen
   # to prevent any conflicts by shipping a (nearly) empty
   # dir, and recursively purging
-  file { $php::config::configdir:
+  file { $configdir:
     ensure  => directory,
     recurse => true,
     purge   => true,
@@ -46,97 +63,23 @@ class php {
 
   file {
     [
-      "${php::config::root}/phpenv.d",
-      "${php::config::root}/phpenv.d/install",
-      "${php::config::root}/shims",
-      "${php::config::root}/versions",
-      "${php::config::root}/libexec",
+      "${phpenv_root}/plugins",
+      "${phpenv_root}/phpenv.d",
+      "${phpenv_root}/phpenv.d/install",
+      "${phpenv_root}/shims",
+      "${phpenv_root}/versions",
+      "${phpenv_root}/libexec",
     ]:
       ensure  => directory,
-      require => Exec['phpenv-setup-root-repo'];
-
-    "${boxen::config::envdir}/phpenv.sh":
-      source => 'puppet:///modules/php/phpenv.sh' ;
-  }
-
-  # Resolve dependencies
-
-  package { [
-      'freetype',
-      'gmp',
-      'icu4c',
-      'jpeg',
-      'libevent',
-      'mcrypt',
-    ]:
-    provider => homebrew,
-  }
-
-  # Need autoconf version less than 2.59 for php 5.3 (ewwwww)
-
-  homebrew::formula { 'autoconf213':
-    before => Package['boxen/brews/autoconf213'],
-  }
-
-  package { 'boxen/brews/autoconf213':
-    ensure => '2.13-boxen1',
-  }
-
-  # Install dupe version of zlib as tapping homebrew dupes appears to have
-  # broken. I've also tried to build a specific zlib module, but this also
-  # will not currently install via brew within boxen
-  #
-  # See https://github.com/boxen/puppet-homebrew/issues/14
-  #
-  # Note: this will work for newly installed versions of PHP, but will NOT
-  # work for versions of PHP installed prior to this. The best solution you
-  # have is to remove those versions manually and Boxen will re-install
-
-  homebrew::formula { 'zlibphp':
-    source => 'puppet:///modules/php/brews/zlib.rb',
-    before => Package['boxen/brews/zlibphp'] ;
-  }
-
-  package { 'boxen/brews/zlibphp':
-    ensure => '1.2.8-boxen1',
-  }
-
-  # Set up phpenv
-
-  $git_init   = 'git init .'
-  $git_remote = 'git remote add origin https://github.com/phpenv/phpenv.git'
-  $git_fetch  = 'git fetch -q origin'
-  $git_reset  = "git reset --hard ${phpenv_version}"
-
-  exec { 'phpenv-setup-root-repo':
-    command => "${git_init} && ${git_remote} && ${git_fetch} && ${git_reset}",
-    cwd     => $php::config::root,
-    creates => "${php::config::root}/bin/phpenv",
-    require => [
-      File[$php::config::root],
-      Class['git'],
-    ]
-  }
-
-  exec { "ensure-phpenv-version-${phpenv_version}":
-    command => "${git_fetch} && git reset --hard ${phpenv_version}",
-    unless  => "git rev-parse HEAD | grep ${phpenv_version}",
-    cwd     => $php::config::root,
-    require => Exec['phpenv-setup-root-repo']
-  }
-
-  # Cache the PHP src repository we'll need this for extensions
-  # and at some point building versions #todo
-  repository { "${php::config::root}/php-src":
-    source => 'php/php-src',
+      require => Repository[$phpenv_root]
   }
 
   # Shared PEAR data directory - used for downloads & cache
-  file { "${php::config::datadir}/pear":
+  file { "${datadir}/pear":
     ensure  => directory,
-    owner   => $::boxen_user,
+    owner   => $php::user,
     group   => 'staff',
-    require => File[$php::config::datadir],
+    require => File[$datadir],
   }
 
   # Kill off the legacy PHP-FPM daemon as we're moving to per version instances
@@ -148,4 +91,8 @@ class php {
     ensure => stopped,
   }
 
+  Repository[$phpenv_root] ->
+    Repository["${phpenv_root}/php-src"] ->
+    Php::Plugin <| |> ->
+    Php::Version <| |>
 }

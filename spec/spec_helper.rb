@@ -9,8 +9,9 @@ end
 
 def default_test_facts
   {
-    :boxen_home   => '/test/boxen',
-    :boxen_user   => 'testuser',
-    :boxen_srcdir => '/Users/testuser/src'
+    :boxen_home                  => '/test/boxen',
+    :boxen_user                  => 'testuser',
+    :macosx_productversion_major => '10.8',
+    :osfamily                    => 'Darwin',
   }
 end
