@@ -9,7 +9,7 @@ class php::composer {
 
   exec { 'download-php-composer':
     command => "curl -sS -o ${php::phpenv_root}/bin/composer http://getcomposer.org/download/1.0.0-alpha7/composer.phar",
-    creates => "${php::phpenv_root}/bin/composer",
+    unless  => "[ -f ${php::phpenv_root}/bin/composer ] && [ \"`md5 -q ${php::phpenv_root}/bin/composer`\" = \"ef51599395560988ea3e16912bfd70f8\" ]",
     cwd     => $php::phpenv_root,
     require => Repository[$php::phpenv_root]
   } ->
