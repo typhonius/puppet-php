@@ -8,9 +8,9 @@ class php::5_3 {
   require php
   require php::5_3_27
 
-  file { "${php::config::root}/versions/5.3":
+  file { "${php::phpenv_root}/versions/5.3":
     ensure  => symlink,
     force   => true,
-    target  => "${php::config::root}/versions/5.3.27"
+    target  => "${php::phpenv_root}/versions/5.3.27"
   }
 }
