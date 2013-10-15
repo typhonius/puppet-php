@@ -6,11 +6,11 @@
 #
 class php::5_4 {
   require php
-  require php::5_4_17
+  require php::5_4_20
 
   file { "${php::phpenv_root}/versions/5.4":
     ensure  => symlink,
     force   => true,
-    target  => "${php::phpenv_root}/versions/5.4.17"
+    target  => "${php::phpenv_root}/versions/5.4.20"
   }
 }
