@@ -7,9 +7,9 @@
 class php::5_4 inherits php {
   require php::5_4_20
 
-  file { "${php::phpenv_root}/versions/5.4":
+  file { "${phpenv_root}/versions/5.4":
     ensure  => symlink,
     force   => true,
-    target  => "${php::phpenv_root}/versions/5.4.20"
+    target  => "${phpenv_root}/versions/5.4.20"
   }
 }

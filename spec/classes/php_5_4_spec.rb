@@ -5,12 +5,12 @@ describe "php::5_4" do
 
   it do
     should include_class("php")
-    should include_class("php::5_4_17")
+    should include_class("php::5_4_20")
 
     should contain_file("/test/boxen/phpenv/versions/5.4").with({
       :ensure => "symlink",
       :force  => true,
-      :target => "/test/boxen/phpenv/versions/5.4.17"
+      :target => "/test/boxen/phpenv/versions/5.4.20"
     })
   end
 end
