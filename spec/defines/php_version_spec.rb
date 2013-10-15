@@ -36,8 +36,16 @@ describe "php::version" do
         ]
       })
 
-      should contain_file("/test/boxen/data/php/5.4.17").with_ensure("directory")
-      should contain_file("/test/boxen/config/php/5.4.17").with_ensure("directory")
+      [
+        "/test/boxen/data/php/5.4.17",
+        "/test/boxen/config/php/5.4.17"
+      ].each do |dir|
+        should contain_file(dir).with({
+          :ensure => "directory",
+          :before => "Exec[php-install-5.4.17]"
+        })
+      end
+
       should contain_file("/test/boxen/config/php/5.4.17/conf.d").with({
         :ensure  => "directory",
         :purge   => "true",

@@ -12,7 +12,6 @@ describe "php::local" do
     end
 
     it do
-      should include_class("php::config")
       should include_class('php::5_4_17')
 
       should contain_file('/tmp/.php-version').with({
@@ -31,7 +30,6 @@ describe "php::local" do
     end
 
     it do
-      should include_class("php::config")
       should contain_file('/tmp/.php-version').with_ensure('absent')
     end
   end
