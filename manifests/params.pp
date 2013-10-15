@@ -20,7 +20,15 @@ class php::params {
     }
   }
 
-  $phpenv_version    = '6499bb6c7b645af3f4e67f7e17708d5ee208453f'
+  $phpenv_version = 'v0.4.0'
+
+  $phpenv_plugins = {
+    'php-build' => {
+      'ensure' => 'master',
+      'source' => 'CHH/php-build'
+    }
+  }
+
   $phpenv_pluginsdir = "${root}/plugins"
 
   $cachedir          = "${datadir}/cache"

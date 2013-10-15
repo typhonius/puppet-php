@@ -17,48 +17,44 @@ class php(
   $cachedir          = $php::params::cachedir,
   $extensioncachedir = $php::params::extensioncachedir
 ) inherits php::params {
+  include autoconf
+  include libpng
+  include libtool
+  include openssl
+  include pcre
+  include pkgconfig
 
   if $::osfamily == 'Darwin' {
     include boxen::config
+    include homebrew
 
     file { "${boxen::config::envdir}/phpenv.sh":
-      source => 'puppet:///modules/php/phpenv.sh' ;
+      source  => 'puppet:///modules/php/phpenv.sh',
+      require => Repository[$phpenv_root]
     }
   }
 
   repository { $phpenv_root:
     ensure => $phpenv_version,
-    source => 'phpenv/phpenv',
+    source => 'createdbypete/phpenv',
     user   => $user
   }
 
-  # Cache the PHP src repository we'll need this for extensions
-  # and at some point building versions #todo
-  repository { "${phpenv_root}/php-src":
-    source => 'php/php-src',
-    user   => $user
+  file { "${phpenv_root}/plugins/php-build/share/php-build/default_configure_options":
+    content => template('php/default_configure_options.erb'),
+    require => Php::Plugin['php-build']
   }
 
   file {
     [
       $logdir,
       $datadir,
+      $configdir,
       $cachedir,
       $extensioncachedir,
     ]:
     ensure  => directory,
     require => Repository[$phpenv_root]
-  }
-
-  # Ensure we only have config files managed by Boxen
-  # to prevent any conflicts by shipping a (nearly) empty
-  # dir, and recursively purging
-  file { $configdir:
-    ensure  => directory,
-    recurse => true,
-    purge   => true,
-    force   => true,
-    source  => 'puppet:///modules/php/empty-conf-dir',
   }
 
   file {
@@ -68,18 +64,26 @@ class php(
       "${phpenv_root}/phpenv.d/install",
       "${phpenv_root}/shims",
       "${phpenv_root}/versions",
-      "${phpenv_root}/libexec",
     ]:
       ensure  => directory,
       require => Repository[$phpenv_root]
   }
 
-  # Shared PEAR data directory - used for downloads & cache
-  file { "${datadir}/pear":
-    ensure  => directory,
-    owner   => $php::user,
-    group   => 'staff',
-    require => File[$datadir],
+  $_real_phpenv_plugins = merge($php::params::phpenv_plugins, $phpenv_plugins)
+  create_resources('php::plugin', $_real_phpenv_plugins)
+
+  package { [
+      'freetype',
+      'jpeg',
+      'gd',
+      'libevent',
+      'mcrypt',
+      'homebrew/dupes/zlib'
+    ]:
+  }
+
+  homebrew::tap { 'homebrew/dupes':
+    before => Package['homebrew/dupes/zlib']
   }
 
   # Kill off the legacy PHP-FPM daemon as we're moving to per version instances
@@ -92,7 +96,6 @@ class php(
   }
 
   Repository[$phpenv_root] ->
-    Repository["${phpenv_root}/php-src"] ->
     Php::Plugin <| |> ->
     Php::Version <| |>
 }

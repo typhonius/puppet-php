@@ -1,35 +1,34 @@
---disable-debug
-
---enable-bcmath
---enable-cgi
---enable-exif
---enable-fpm
---enable-ftp
---enable-mbstring
---enable-pcntl
---enable-shmop
---enable-soap
+--without-pear
+--with-gd
+--enable-gd-native-ttf
 --enable-sockets
+--with-jpeg-dir=<%= scope.lookupvar "homebrew::config::installdir" %>/opt/jpeg
+--with-png-dir=<%= scope.lookupvar "homebrew::config::installdir" %>/opt/libpng
+--enable-exif
+--enable-zip
+--with-zlib
+--with-zlib-dir=<%= scope.lookupvar "homebrew::config::installdir" %>/opt/zlib
+--with-kerberos
+--with-openssl=<%= scope.lookupvar "homebrew::config::installdir" %>/opt/openssl
+--with-mcrypt=<%= scope.lookupvar "homebrew::config::installdir" %>/opt/mcrypt
+--enable-soap
+--enable-xmlreader
+--with-xsl=/usr
+--enable-ftp
+--enable-fastcgi
+--with-curl=/usr
+--with-xmlrpc
 --enable-sysvsem
 --enable-sysvshm
---enable-xmlreader
---enable-zip
-
---with-curl=/usr
---with-gd
---with-kerberos
+--enable-shmop
 --with-mysql=mysqlnd
 --with-mysqli=mysqlnd
---with-openssl
 --with-pdo-mysql=mysqlnd
 --with-pdo-sqlite
---with-readline
---with-tidy
---with-xmlrpc
---with-xsl
-
---with-jpeg-dir=<%= scope.lookupvar "boxen::config::homebrewdir" %>/opt/jpeg
---with-png-dir=<%= scope.lookupvar "boxen::config::homebrewdir" %>/opt/libpng
---with-zlib
---with-zlib-dir=<%= scope.lookupvar "boxen::config::homebrewdir" %>/opt/zlib
---with-mcrypt=<%= scope.lookupvar "boxen::config::homebrewdir" %>/opt/mcrypt
+--enable-pcntl
+--with-readline=<%= scope.lookupvar "homebrew::config::installdir" %>/opt/readline
+--enable-mbstring
+--disable-debug
+--enable-fpm
+--with-libevent-dir=<%= scope.lookupvar "homebrew::config::installdir" %>/opt/libevent
+--enable-bcmath
