@@ -95,6 +95,11 @@ class php(
     ensure => stopped,
   }
 
+  exec { 'phpenv-rehash':
+    command     => "${php::phpenv_root}/bin/phpenv rehash",
+    refreshonly => true
+  }
+
   Repository[$phpenv_root] ->
     Php::Plugin <| |> ->
     Php::Version <| |>

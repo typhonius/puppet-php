@@ -72,15 +72,9 @@ describe "php::version" do
         should contain_file(dir).with({
           :ensure => "absent",
           :force  => "true",
-          :notify => "Exec[phpenv-rehash-5.4.17]"
+          :notify => "Exec[phpenv-rehash]"
         })
       end
-
-      should contain_exec("phpenv-rehash-5.4.17").with({
-        :command     => "/test/boxen/phpenv/bin/phpenv rehash",
-        :require     => "Class[Php]",
-        :refreshonly => "true"
-      })
     end
   end
 end

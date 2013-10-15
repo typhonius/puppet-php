@@ -86,5 +86,10 @@ describe "php" do
     })
 
     should contain_service("dev.php-fpm").with_ensure("stopped")
+
+    should contain_exec("phpenv-rehash").with({
+      :command     => "/test/boxen/phpenv/bin/phpenv rehash",
+      :refreshonly => "true"
+    })
   end
 end

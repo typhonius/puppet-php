@@ -50,13 +50,7 @@ define php::version(
       ]:
       ensure => absent,
       force  => true,
-      notify => Exec["phpenv-rehash-${version}"]
-    }
-
-    exec { "phpenv-rehash-${version}":
-      command     => "${php::phpenv_root}/bin/phpenv rehash",
-      require     => Class['php'],
-      refreshonly => true
+      notify => Exec["phpenv-rehash"]
     }
 
   } else {
