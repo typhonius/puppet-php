@@ -57,7 +57,11 @@ define php::version(
 
     $default_env = {
       'CFLAGS' => '-I/opt/X11/include',
-      'PHPENV_ROOT' => $php::phpenv_root
+      'PHPENV_ROOT' => $php::phpenv_root,
+      'PHP_BUILD_CONFIGURE_OPTS' => "
+        --sysconfdir=${version_config_root}
+        --with-config-file-path=${version_config_root}
+        --with-config-file-scan-dir=${conf_d}"
     }
 
     $final_env = merge($default_env, $env)

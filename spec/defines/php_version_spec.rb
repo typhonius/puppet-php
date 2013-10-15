@@ -26,7 +26,14 @@ describe "php::version" do
         :creates     => "/test/boxen/phpenv/versions/5.4.17",
         :user        => "testuser",
         :require     => "Class[Php]",
-        :environment => ["CFLAGS=-I/opt/X11/include", "PHPENV_ROOT=/test/boxen/phpenv"]
+        :environment => [
+          "CFLAGS=-I/opt/X11/include",
+          "PHPENV_ROOT=/test/boxen/phpenv",
+          "PHP_BUILD_CONFIGURE_OPTS=
+        --sysconfdir=/test/boxen/config/php/5.4.17
+        --with-config-file-path=/test/boxen/config/php/5.4.17
+        --with-config-file-scan-dir=/test/boxen/config/php/5.4.17/conf.d"
+        ]
       })
 
       should contain_file("/test/boxen/data/php/5.4.17").with_ensure("directory")
