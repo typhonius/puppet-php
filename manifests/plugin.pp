@@ -8,9 +8,9 @@
 #   }
 
 define php::plugin($ensure, $source) {
-  include php
+  require php
 
-  repository { "${php::phpenv_root}/plugins/${name}":
+  repository { "${php::phpenv_pluginsdir}/${name}":
     ensure => $ensure,
     force  => true,
     source => $source,

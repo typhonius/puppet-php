@@ -25,7 +25,7 @@ class php::params {
     }
   }
 
-  $phpenv_pluginsdir = "${root}/plugins"
+  $phpenv_pluginsdir = "${phpenv_root}/plugins"
 
   $cachedir          = "${datadir}/cache"
   $extensioncachedir = "${datadir}/cache/extensions"
