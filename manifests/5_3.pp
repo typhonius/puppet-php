@@ -4,13 +4,12 @@
 #
 #     include php::5_3
 #
-class php::5_3 {
-  require php
+class php::5_3 inherits php {
   require php::5_3_27
 
-  file { "${php::phpenv_root}/versions/5.3":
+  file { "${phpenv_root}/versions/5.3":
     ensure  => symlink,
     force   => true,
-    target  => "${php::phpenv_root}/versions/5.3.27"
+    target  => "${phpenv_root}/versions/5.3.27"
   }
 }
