@@ -6,21 +6,30 @@
 # You will likely need to change both the root and SCRIPT_FILENAME parameters below
 # to match your setup
 #
+upstream <%= @server_name %> {
+  server unix:<%= scope.lookupvar "boxen::config::socketdir" %>/<%= @name %>;
+}
+
 server {
   access_log <%= scope.lookupvar "nginx::config::logdir" %>/<%= @name %>.access.log main;
   listen 80;
-  root <%= @repo_dir %>/www;
-  server_name <%= @server_name %>;
+  root <%= @repo_dir %>/public;
+  index index.php index.html;
+  server_name <%= @server_name %> *.<%= @server_name %>;
+  server_name "~^((.*)\.)?<%= @name %>(\.\d+){4}\.xip\.io$";
 
   client_max_body_size 50M;
-
   error_page 500 502 503 504 /50x.html;
 
-  location / {
-    include <%= scope.lookupvar "nginx::config::configdir" %>/fastcgi_params;
+  location = /50x.html {
+    root html;
+  }
+
+  try_files $uri $uri/ /index.php;
+  location ~ \.php$ {
     keepalive_timeout 0;
-    fastcgi_pass unix:<%= scope.lookupvar "boxen::config::socketdir" %>/<%= @name %>;
-    fastcgi_param SCRIPT_FILENAME <%= @repo_dir %>/www/index.php;
-    fastcgi_param PATH_INFO $fastcgi_script_name;
+    include       <%= scope.lookupvar "nginx::config::configdir" %>/fastcgi_params;
+    fastcgi_pass  <%= @server_name %>;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
   }
 }
