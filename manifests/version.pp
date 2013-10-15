@@ -85,6 +85,7 @@ define php::version(
         $version_config_root
       ]:
       ensure => directory,
+      before => Exec["php-install-${version}"]
     }
 
     file { $conf_d:
