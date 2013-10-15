@@ -1,4 +1,5 @@
-# Installs a php version, and sets up phpenv
+# Installs a php version via phpenv.
+# Takes ensure, env, and version params.
 #
 # Usage:
 #
@@ -11,38 +12,35 @@
 #     include php::5_3_20
 #
 define php::version(
-  $ensure    = 'installed',
-  $version   = $name
+  $ensure  = 'installed',
+  $env     = {},
+  $version = $name
 ) {
   require php
-  include boxen::config
+  include homebrew::config
   include mysql::config
 
-  # Install location
-  $dest = "${php::config::root}/versions/${version}"
+  # Version must be supplied in Major.Minor.Patch format
+  validate_re($version, '^5\.(3\.([^0-2]|[3-9]|[0-9]{2})|[4-5]\.\d+)$',
+    'Please specify the Major.Minor.Patch version of PHP >=5.3.3')
 
-  # Log locations
-  $error_log = "${php::config::logdir}/${version}.error.log"
+  $dest = "${php::phpenv_root}/versions/${version}"
+
+  # Log location
+  $error_log = "${php::logdir}/${version}.error.log"
+
+  # Data directory for this version
+  $version_data_root = "${php::datadir}/${version}"
 
   # Config locations
-  $version_config_root  = "${php::config::configdir}/${version}"
-  $php_ini              = "${version_config_root}/php.ini"
-  $conf_d               = "${version_config_root}/conf.d"
+  $version_config_root = "${php::configdir}/${version}"
+  $php_ini             = "${version_config_root}/php.ini"
+  $conf_d              = "${version_config_root}/conf.d"
 
   # Module location for PHP extensions
   $module_dir = "${dest}/modules"
 
-  # Data directory for this version
-  $version_data_root = "${php::config::datadir}/${version}"
-
   if $ensure == 'absent' {
-
-    # If we're nuking a version of PHP also ensure we shut down
-    # and get rid of the PHP FPM Service & config
-
-    php::fpm { $version:
-      ensure => 'absent'
-    }
 
     file {
       [
@@ -56,15 +54,31 @@ define php::version(
 
   } else {
 
-    # Data directory
-
-    file { $version_data_root:
-      ensure => directory,
+    $default_env = {
+      'CFLAGS' => '-I/opt/X11/include',
+      'PHPENV_ROOT' => $php::phpenv_root
     }
 
-    # Set up config directories
+    $final_env = merge($default_env, $env)
 
-    file { $version_config_root:
+    exec { "php-install-${version}":
+      command  => "${php::phpenv_root}/bin/phpenv install ${version}",
+      provider => shell,
+      timeout  => 0,
+      creates  => $dest,
+      user     => $php::user,
+      require  => Class['php']
+    }
+
+    Exec["php-install-${version}"] {
+      environment +> sort(join_keys_to_values($final_env, '='))
+    }
+
+    file {
+      [
+        $version_data_root,
+        $version_config_root
+      ]:
       ensure => directory,
     }
 
@@ -75,103 +89,21 @@ define php::version(
       require => File[$version_config_root],
     }
 
-    # Ensure module dir is created for extensions AFTER php is installed
     file { $module_dir:
       ensure  => directory,
-      require => Php_version[$version],
+      require => Exec["php-install-${version}"],
     }
 
-    # Set up config files
-
+    # Set up config file
     file { $php_ini:
       content => template('php/php.ini.erb'),
       require => File[$version_config_root]
     }
 
-    # Log files
-
+    # Log file
     file { $error_log:
-      owner => $::boxen_user,
+      owner => $php::user,
       mode  => '0644',
     }
-
-    # Install PHP!
-
-    php_version { $version:
-      user          => $::boxen_user,
-      user_home     => "/Users/${::boxen_user}",
-      phpenv_root   => $php::config::root,
-      version       => $version,
-      homebrew_path => $boxen::config::homebrewdir,
-      require       => [
-        Repository["${php::config::root}/php-src"],
-        Package['gettext'],
-        Package['freetype'],
-        Package['gmp'],
-        Package['icu4c'],
-        Package['jpeg'],
-        Package['libpng'],
-        Package['mcrypt'],
-        Package['boxen/brews/zlibphp'],
-        Package['autoconf'],
-        Package['boxen/brews/autoconf213'],
-      ],
-      notify        => Exec["phpenv-rehash-post-install-${version}"],
-    }
-
-    # Fix permissions for php versions installed prior to 0.3.5 of this module
-    file { $dest:
-      ensure  => directory,
-      owner   => $::boxen_user,
-      group   => 'staff',
-      recurse => true,
-      require => Php_version[$version],
-    }
-
-    # Rehash phpenv shims when a new version is installed
-    exec { "phpenv-rehash-post-install-${version}":
-      command     => "/bin/rm -rf ${php::config::root}/shims && PHPENV_ROOT=${php::config::root} ${php::config::root}/bin/phpenv rehash",
-      require     => Php_version[$version],
-      refreshonly => true,
-    }
-
-    # PEAR cruft
-
-    # Ensure per version PEAR cache folder is present
-    file { "${version_data_root}/cache":
-      ensure  => directory,
-      require => File[$version_data_root],
-    }
-
-    # Set cache_dir for PEAR
-    exec { "pear-${version}-cache_dir":
-      command => "${dest}/bin/pear config-set cache_dir ${php::config::datadir}/pear",
-      unless  => "${dest}/bin/pear config-get cache_dir | grep -i ${php::config::datadir}/pear",
-      require => [
-        Php_version[$version],
-        File["${php::config::datadir}/pear"],
-      ],
-    }
-
-    # Set download_dir for PEAR
-    exec { "pear-${version}-download_dir":
-      command => "${dest}/bin/pear config-set download_dir ${php::config::datadir}/pear",
-      unless  => "${dest}/bin/pear config-get download_dir | grep -i ${php::config::datadir}/pear",
-      require => [
-        Php_version[$version],
-        File["${php::config::datadir}/pear"],
-      ],
-    }
-
-    # Set temp_dir for PEAR
-    exec { "pear-${version}-temp_dir":
-      command => "${dest}/bin/pear config-set temp_dir ${php::config::datadir}/pear",
-      unless  => "${dest}/bin/pear config-get temp_dir | grep -i ${php::config::datadir}/pear",
-      require => [
-        Php_version[$version],
-        File["${php::config::datadir}/pear"],
-      ],
-    }
-
   }
 }
