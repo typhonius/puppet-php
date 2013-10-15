@@ -4,8 +4,7 @@
 #
 #   include php::composer
 #
-class php::composer {
-  require php
+class php::composer inherits php {
 
   exec { 'download-php-composer':
     command => "curl -sS -o ${php::phpenv_root}/bin/composer http://getcomposer.org/download/1.0.0-alpha7/composer.phar",

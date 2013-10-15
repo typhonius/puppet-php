@@ -4,8 +4,7 @@
 #
 #     include php::5_4
 #
-class php::5_4 {
-  require php
+class php::5_4 inherits php {
   require php::5_4_20
 
   file { "${php::phpenv_root}/versions/5.4":
