@@ -12,11 +12,7 @@ class php::params {
     }
 
     default: {
-      $rbenv_root = '/usr/local/share/phpenv'
-      $logdir     = '/usr/local/share/php/log'
-      $configdir  = '/usr/local/share/php/config'
-      $datadir    = '/usr/local/share/php/data'
-      $user       = 'root'
+      fail("The ${module_name} module is not supported on an ${::osfamily} based system.")
     }
   }
 
