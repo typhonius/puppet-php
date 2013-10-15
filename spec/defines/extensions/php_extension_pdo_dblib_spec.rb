@@ -11,7 +11,7 @@ describe "php::extension::pdo_dblib" do
 
   it do
     should include_class("php::dependencies::freetds")
-    should include_class("php::config")
+    should include_class("php")
     should include_class("php::5_4_17")
 
     should contain_php_extension("pdo_dblib for 5.4.17").with({

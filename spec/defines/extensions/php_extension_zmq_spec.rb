@@ -13,7 +13,7 @@ describe "php::extension::zmq" do
 
   it do
     should include_class("zeromq")
-    should include_class("php::config")
+    should include_class("php")
     should include_class("php::5_4_17")
 
     should contain_repository("/test/boxen/data/php/cache/extensions/zmq").with({

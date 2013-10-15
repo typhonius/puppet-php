@@ -14,7 +14,7 @@ define php::extension::zookeeper(
   include boxen::config
   require zookeeper
 
-  require php::config
+  require php
   # Require php version eg. php::5_4_10
   # This will compile, install and set up config dirs if not present
   require join(['php', join(split($php, '[.]'), '_')], '::')
@@ -24,7 +24,7 @@ define php::extension::zookeeper(
   $url = "http://pecl.php.net/get/zookeeper-${version}.tgz"
 
   # Final module install path
-  $module_path = "${php::config::root}/versions/${php}/modules/${extension}.so"
+  $module_path = "${php::phpenv_root}/versions/${php}/modules/${extension}.so"
 
   # Additional options
   $configure_params = "--with-libzookeeper-dir=${boxen::config::homebrewdir}/opt/zookeeper"
@@ -35,15 +35,15 @@ define php::extension::zookeeper(
     package_name     => $package_name,
     package_url      => $url,
     homebrew_path    => $boxen::config::homebrewdir,
-    phpenv_root      => $php::config::root,
+    phpenv_root      => $php::phpenv_root,
     php_version      => $php,
-    cache_dir        => $php::config::extensioncachedir,
+    cache_dir        => $php::extensioncachedir,
     configure_params => $configure_params,
   }
 
   # Add config file once extension is installed
 
-  file { "${php::config::configdir}/${php}/conf.d/${extension}.ini":
+  file { "${php::configdir}/${php}/conf.d/${extension}.ini":
     content => template('php/extensions/generic.ini.erb'),
     require => Php_extension[$name],
   }

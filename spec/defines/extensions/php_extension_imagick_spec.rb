@@ -12,7 +12,7 @@ describe "php::extension::imagick" do
   end
 
   it do
-    should include_class("php::config")
+    should include_class("php")
     should include_class("imagemagick")
     should include_class("php::5_4_17")
 

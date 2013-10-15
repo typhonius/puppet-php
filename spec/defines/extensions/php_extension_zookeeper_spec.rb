@@ -14,7 +14,7 @@ describe "php::extension::zookeeper" do
   it do
     should include_class("boxen::config")
     should include_class("zookeeper")
-    should include_class("php::config")
+    should include_class("php")
     should include_class("php::5_4_17")
 
     should contain_php_extension("zookeeper for 5.4.17").with({

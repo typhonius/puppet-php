@@ -13,7 +13,7 @@ define php::extension::couchbase(
 ) {
   require couchbase::lib
 
-  require php::config
+  require php
   # Require php version eg. php::5_4_10
   # This will compile, install and set up config dirs if not present
   require join(['php', join(split($php, '[.]'), '_')], '::')
@@ -21,10 +21,10 @@ define php::extension::couchbase(
   $extension = 'couchbase'
 
   # Final module install path
-  $module_path = "${php::config::root}/versions/${php}/modules/${extension}.so"
+  $module_path = "${php::phpenv_root}/versions/${php}/modules/${extension}.so"
 
   # Clone the source repository
-  repository { "${php::config::extensioncachedir}/couchbase":
+  repository { "${php::extensioncachedir}/couchbase":
     source => 'couchbase/php-ext-couchbase'
   }
 
@@ -39,18 +39,18 @@ define php::extension::couchbase(
     version          => $version,
 
     homebrew_path    => $boxen::config::homebrewdir,
-    phpenv_root      => $php::config::root,
+    phpenv_root      => $php::phpenv_root,
     php_version      => $php,
 
-    cache_dir        => $php::config::extensioncachedir,
-    require          => Repository["${php::config::extensioncachedir}/couchbase"],
+    cache_dir        => $php::extensioncachedir,
+    require          => Repository["${php::extensioncachedir}/couchbase"],
 
     configure_params => $configure_params,
   }
 
   # Add config file once extension is installed
 
-  file { "${php::config::configdir}/${php}/conf.d/${extension}.ini":
+  file { "${php::configdir}/${php}/conf.d/${extension}.ini":
     content => template('php/extensions/generic.ini.erb'),
     require => Php_extension[$name],
   }
