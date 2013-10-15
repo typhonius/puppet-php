@@ -63,7 +63,7 @@ describe "php" do
     end
 
     should contain_php__plugin("php-build").with({
-      :ensure => "master",
+      :ensure => "02e53a5484e2b84d1184dce40c9c05447ae0a934",
       :source => "CHH/php-build"
     })
 
