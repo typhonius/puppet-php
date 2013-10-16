@@ -52,7 +52,7 @@ define php::version(
       ]:
       ensure => absent,
       force  => true,
-      notify => Exec["phpenv-rehash"]
+      notify => Exec['phpenv-rehash']
     }
 
     php::fpm::service{ $version:

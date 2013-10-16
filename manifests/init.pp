@@ -68,7 +68,7 @@ class php(
       require => Repository[$phpenv_root]
   }
 
-  $_real_phpenv_plugins = merge($php::params::phpenv_plugins, $phpenv_plugins)
+  $_real_phpenv_plugins = merge($php::params::phpenv_plugins, $php::phpenv_plugins)
   create_resources('php::plugin', $_real_phpenv_plugins)
 
   package { [

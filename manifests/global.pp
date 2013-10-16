@@ -12,9 +12,9 @@ class php::global(
     require join(['php', join(split($version, '[.]'), '_')], '::')
   }
 
-  file { "${phpenv_root}/version":
+  file { "${php::phpenv_root}/version":
     ensure  => present,
-    owner   => $user,
+    owner   => $php::user,
     mode    => '0644',
     content => "${version}\n",
   }
