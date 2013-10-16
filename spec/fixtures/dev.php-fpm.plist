@@ -32,10 +32,10 @@
     <string>/test/boxen/phpenv/versions/5.4.17</string>
 
     <key>StandardErrorPath</key>
-    <string>/test/boxen/log/php/5.4.17.error.log</string>
+    <string>/test/boxen/log/php/5.4.17.fpm.error.log</string>
 
     <key>StandardOutPath</key>
-    <string>/test/boxen/log/php/5.4.17.error.log</string>
+    <string>/test/boxen/log/php/5.4.17.fpm.error.log</string>
 
   </dict>
 </plist>
