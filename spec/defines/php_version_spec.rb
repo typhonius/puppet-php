@@ -6,8 +6,9 @@ describe "php::version" do
 
   it do
     should include_class("php")
-    should include_class("mysql::config")
+    should include_class("boxen::config")
     should include_class("homebrew::config")
+    should include_class("mysql::config")
   end
 
   context 'ensure => installed' do
@@ -46,26 +47,47 @@ describe "php::version" do
         })
       end
 
-      should contain_file("/test/boxen/config/php/5.4.17/conf.d").with({
-        :ensure  => "directory",
-        :purge   => "true",
-        :force   => "true",
-        :require => "File[/test/boxen/config/php/5.4.17]"
-      })
-
-      should contain_file("/test/boxen/phpenv/versions/5.4.17/modules").with({
-        :ensure  => "directory",
-        :require => "Exec[php-install-5.4.17]"
-      })
+      [
+        "/test/boxen/config/php/5.4.17/conf.d",
+        "/test/boxen/config/php/5.4.17/pool.d"
+      ].each do |dir|
+        should contain_file(dir).with({
+          :ensure  => "directory",
+          :purge   => "true",
+          :force   => "true",
+          :source  => 'puppet:///modules/php/empty-conf-dir',
+          :require => "File[/test/boxen/config/php/5.4.17]"
+        })
+      end
 
       should contain_file("/test/boxen/config/php/5.4.17/php.ini").with({
         :content => File.read("spec/fixtures/php.ini"),
         :require => "File[/test/boxen/config/php/5.4.17]"
       })
 
-      should contain_file("/test/boxen/log/php/5.4.17.error.log").with({
-        :owner => "testuser",
-        :mode  => "0644"
+      [
+        "/test/boxen/log/php/5.4.17.error.log",
+        "/test/boxen/log/php/5.4.17.fpm.error.log"
+      ].each do |f|
+        should contain_file(f).with({
+          :owner => "testuser",
+          :mode  => "0644"
+        })
+      end
+
+      should contain_file("/test/boxen/config/php/5.4.17/php-fpm.conf").with({
+        :content => File.read("spec/fixtures/php-fpm.conf"),
+        :require => "File[/test/boxen/config/php/5.4.17]",
+        :notify  => "Php::Fpm::Service[5.4.17]"
+      })
+
+      should contain_file("/test/boxen/config/php/5.4.17/pool.d/5.4.17.conf").with({
+        :content => File.read("spec/fixtures/php-fpm-pool.conf")
+      })
+
+      should contain_php__fpm__service("5.4.17").with({
+        :ensure    => "running",
+        :subscribe => "File[/test/boxen/config/php/5.4.17/pool.d/5.4.17.conf]"
       })
     end
   end
@@ -90,6 +112,8 @@ describe "php::version" do
           :notify => "Exec[phpenv-rehash]"
         })
       end
+
+      should contain_php__fpm__service("5.4.17").with_ensure("absent")
     end
   end
 end

@@ -17,6 +17,7 @@ define php::version(
   $version = $name
 ) {
   require php
+  include boxen::config
   include homebrew::config
   include mysql::config
 
@@ -27,18 +28,19 @@ define php::version(
   $dest = "${php::phpenv_root}/versions/${version}"
 
   # Log location
-  $error_log = "${php::logdir}/${version}.error.log"
+  $error_log     = "${php::logdir}/${version}.error.log"
+  $fpm_error_log = "${php::logdir}/${version}.fpm.error.log"
 
   # Data directory for this version
-  $version_data_root = "${php::datadir}/${version}"
+  $version_data_root   = "${php::datadir}/${version}"
+  $pid_file            = "${php::datadir}/${version}.pid"
 
   # Config locations
   $version_config_root = "${php::configdir}/${version}"
   $php_ini             = "${version_config_root}/php.ini"
   $conf_d              = "${version_config_root}/conf.d"
-
-  # Module location for PHP extensions
-  $module_dir = "${dest}/modules"
+  $fpm_config          = "${version_config_root}/php-fpm.conf"
+  $fpm_pool_config_dir = "${version_config_root}/pool.d"
 
   if $ensure == 'absent' {
 
@@ -46,11 +48,15 @@ define php::version(
       [
         $dest,
         $version_config_root,
-        $version_data_root,
+        $version_data_root
       ]:
       ensure => absent,
       force  => true,
       notify => Exec["phpenv-rehash"]
+    }
+
+    php::fpm::service{ $version:
+      ensure => absent,
     }
 
   } else {
@@ -88,16 +94,17 @@ define php::version(
       before => Exec["php-install-${version}"]
     }
 
-    file { $conf_d:
+    file {
+      [
+        $conf_d,
+        $fpm_pool_config_dir
+      ]:
       ensure  => directory,
+      recurse => true,
       purge   => true,
       force   => true,
+      source  => 'puppet:///modules/php/empty-conf-dir',
       require => File[$version_config_root],
-    }
-
-    file { $module_dir:
-      ensure  => directory,
-      require => Exec["php-install-${version}"],
     }
 
     # Set up config file
@@ -107,9 +114,41 @@ define php::version(
     }
 
     # Log file
-    file { $error_log:
+    file {
+      [
+        $error_log,
+        $fpm_error_log
+      ]:
       owner => $php::user,
       mode  => '0644',
+    }
+
+    # Set up FPM config
+    file { $fpm_config:
+      content => template('php/php-fpm.conf.erb'),
+      require => File[$version_config_root],
+      notify  => Php::Fpm::Service[$version],
+    }
+
+    $pool_name         = $version
+    $socket_path       = "${boxen::config::socketdir}/${version}"
+    $pm                = 'static'
+    $max_children      = 1
+
+    # Additional non required options (as pm = static for this pool):
+    $start_servers     = 1
+    $min_spare_servers = 1
+    $max_spare_servers = 1
+
+    file { "${fpm_pool_config_dir}/${version}.conf":
+      content => template('php/php-fpm-pool.conf.erb'),
+    }
+
+    # Launch our FPM Service
+
+    php::fpm::service{ $version:
+      ensure    => running,
+      subscribe => File["${fpm_pool_config_dir}/${version}.conf"],
     }
   }
 }
