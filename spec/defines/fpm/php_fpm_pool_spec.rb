@@ -14,8 +14,8 @@ describe "php::fpm::pool" do
     end
 
     it do
-      should include_class("php::config")
-      should include_class("php::fpm::5_4_17")
+      should include_class("php")
+      should include_class("php::5_4_17")
 
       should contain_file("/test/boxen/config/php/5.4.17/pool.d/5_4_17_for_test.conf").with({
         :content => File.read("spec/fixtures/php-fpm-pool-custom.conf"),
@@ -26,6 +26,18 @@ describe "php::fpm::pool" do
   end
 
   context "ensure => absent" do
-    pending "no absent state handler currently"
+    let(:params) do
+      {
+        :ensure      => "absent",
+        :version     => "5.4.17",
+        :socket_path => "/path/to/socket"
+      }
+    end
+    it do
+      should contain_file("/test/boxen/config/php/5.4.17/pool.d/5_4_17_for_test.conf").with({
+        :ensure => "absent",
+        :notify => "Service[dev.php-fpm.5.4.17]"
+      })
+    end
   end
 end

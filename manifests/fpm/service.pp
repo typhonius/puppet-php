@@ -10,23 +10,21 @@ define php::fpm::service(
   $version = $name,
   $ensure  = running,
 ) {
-  require php::config
-
-  # Set some nginx params to ensure that fastcgi actually works
-  include nginx::config
+  include php
   include php::fpm::fastcgi
+  include nginx::config
 
   # Config file locations
-  $fpm_config = "${php::config::configdir}/${version}/php-fpm.conf"
+  $fpm_config = "${php::configdir}/${version}/php-fpm.conf"
 
   # Log files
-  $logfile = "${php::config::logdir}/${version}.error.log"
+  $logfile = "${php::logdir}/${version}.fpm.error.log"
 
   # FPM Binary
-  $bin = "${php::config::root}/versions/${version}/sbin/php-fpm"
+  $bin = "${php::phpenv_root}/versions/${version}/sbin/php-fpm"
 
   # Working Directory?
-  $cwd = "${php::config::root}/versions/${version}"
+  $cwd = "${php::phpenv_root}/versions/${version}"
 
   if $ensure == running {
 
@@ -54,6 +52,5 @@ define php::fpm::service(
     service { "dev.php-fpm.${version}":
       ensure  => stopped,
     }
-
   }
 }

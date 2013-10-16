@@ -21,24 +21,27 @@ define php::fpm::pool(
   $ensure            = present,
   $fpm_pool          = 'php/php-fpm-pool.conf.erb',
 ) {
-  require php::config
+  include php
 
   # Set config
-
-  $fpm_pool_config_dir = "${php::config::configdir}/${version}/pool.d"
+  $fpm_pool_config_dir = "${php::configdir}/${version}/pool.d"
   $pool_name = join(split($name, '[. ]'), '_')
 
   # Set up PHP-FPM pool
-
   if $ensure == present {
-    # Ensure that the php fpm service for this php version is installed
-    # eg. php::fpm::5_4_10
-    include join(['php', 'fpm', join(split($version, '[.]'), '_')], '::')
+    # Ensure that this php version is installed
+    # eg. php::5_4_10
+    include join(['php', join(split($version, '[.]'), '_')], '::')
 
     # Create a pool config file
     file { "${fpm_pool_config_dir}/${pool_name}.conf":
       content => template($fpm_pool),
       require => File[$fpm_pool_config_dir],
+      notify  => Service["dev.php-fpm.${version}"],
+    }
+  } else {
+    file { "${fpm_pool_config_dir}/${pool_name}.conf":
+      ensure  => absent,
       notify  => Service["dev.php-fpm.${version}"],
     }
   }
