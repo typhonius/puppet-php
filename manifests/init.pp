@@ -18,7 +18,6 @@ class php(
   $extensioncachedir = $php::params::extensioncachedir
 ) inherits php::params {
   include autoconf
-  include libpng
   include libtool
   include openssl
   include pcre

@@ -15,7 +15,6 @@ describe "php" do
   it do
     should include_class("php::params")
     should include_class("autoconf")
-    should include_class("libpng")
     should include_class("libtool")
     should include_class("openssl")
     should include_class("pcre")
