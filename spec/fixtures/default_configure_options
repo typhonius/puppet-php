@@ -3,7 +3,6 @@
 --enable-gd-native-ttf
 --enable-sockets
 --with-jpeg-dir=/test/boxen/homebrew/opt/jpeg
---with-png-dir=/test/boxen/homebrew/opt/libpng
 --enable-exif
 --enable-zip
 --with-zlib
