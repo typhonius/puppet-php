@@ -25,5 +25,9 @@ server {
     client_body_timeout 3600s;
     send_timeout 3600s;
     fastcgi_param PATH_INFO $fastcgi_script_name;
+
+    fastcgi_read_timeout 3600s;
+    client_body_timeout 3600s;
+    send_timeout 3600s;
   }
 }
