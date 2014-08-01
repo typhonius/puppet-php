@@ -70,7 +70,7 @@ define php::version(
 
     file { $conf_d:
       ensure  => directory,
-      purge   => true,
+      # purge   => true,
       force   => true,
       require => File[$version_config_root],
     }
