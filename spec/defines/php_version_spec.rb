@@ -22,7 +22,7 @@ describe "php::version" do
       should contain_file("/test/boxen/config/php/5.4.17").with_ensure("directory")
       should contain_file("/test/boxen/config/php/5.4.17/conf.d").with({
         :ensure  => "directory",
-        :purge   => "true",
+        # :purge   => "true",
         :force   => "true",
         :require => "File[/test/boxen/config/php/5.4.17]"
       })

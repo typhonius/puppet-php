@@ -37,7 +37,7 @@ describe "php" do
     should contain_file("/test/boxen/config/php").with({
       :ensure  => "directory",
       :recurse => "true",
-      :purge   => "true",
+      # :purge   => "true",
       :force   => "true",
       :source  => "puppet:///modules/php/empty-conf-dir"
     })
