@@ -201,6 +201,14 @@ define php::project(
       require => Repository[$repo_dir],
     }
 
+    # Trash any existing pool configs with the same project name. If a project has
+    #  switched PHP versions, PHP won't be able to start when two different versions 
+    #  try to use the same socket file.
+    exec { "Clear FPM pool configs for ${name}":
+      command => "find -f ${php::config::configdir}/*/pool.d -iname ${name}-*.conf -exec rm {} \\;",
+      path => '/bin:/usr/bin'
+    } ->
+
     # Spin up a PHP-FPM pool for this project, listening on an Nginx socket
     php::fpm::pool { "${name}-${php}":
       version      => $php,
