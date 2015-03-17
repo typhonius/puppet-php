@@ -205,7 +205,7 @@ define php::project(
     #  switched PHP versions, PHP won't be able to start when two different versions 
     #  try to use the same socket file.
     exec { "Clear FPM pool configs for ${name}":
-      command => "find -f ${php::config::configdir}/*/pool.d -iname ${name}-*.conf -exec rm {} \\;",
+      command => "find ${php::config::configdir}/*/pool.d -iname ${name}-*.conf -exec rm {} \\;",
       path => '/bin:/usr/bin'
     } ->
 
