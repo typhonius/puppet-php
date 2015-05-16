@@ -7,9 +7,11 @@
 class php::composer {
   require php
 
+  $version = "1.0.0-alpha10"
+
   exec { 'download-php-composer':
-    command => "curl -sS -o ${php::config::root}/bin/composer https://getcomposer.org/download/1.0.0-alpha8/composer.phar",
-    unless  => "[ -f ${php::config::root}/bin/composer ] && [ \"`md5 -q ${php::config::root}/bin/composer`\" = \"df1001975035f07d09307bf1f1e62584\" ]",
+    command => "curl -sS https://getcomposer.org/installer | php -- --version=${version} --install-dir=${php::config::root}/bin --filename=composer",
+    unless  => "[ -f ${php::config::root}/bin/composer ] && [ \"`${php::config::root}/bin/composer --version | grep -ci '${version}'`\" == \"1\" ]",
     cwd     => $php::config::root,
     require => Exec['phpenv-setup-root-repo']
   } ->
