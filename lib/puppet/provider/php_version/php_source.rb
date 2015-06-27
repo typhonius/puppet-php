@@ -85,6 +85,14 @@ Puppet::Type.type(:php_version).provide(:php_source) do
     puts "Installing PHP #{@resource[:version]}, this may take a while..."
     configure(version)
 
+    # Change libexecdir, this is how homebrew does it.
+    makefile = "#{@resource[:phpenv_root]}/php-src/Makefile"
+    makefileOutdata = File.read(makefile).gsub(/^INSTALL_IT = \$\(mkinstalldirs\) '([^']+)' (.+) LIBEXECDIR=([^\s]+) (.+)$/, "INSTALL_IT = $(mkinstalldirs) '#{@resource[:phpenv_root]}/versions/#{@resource[:version]}/libexec/apache2' \\2 LIBEXECDIR='#{@resource[:phpenv_root]}/versions/#{@resource[:version]}/libexec/apache2' \\4")
+
+    File.open(makefile, 'w') do |out|
+      out << makefileOutdata
+    end
+
     # Make & install
     make
     make_install
@@ -262,6 +270,8 @@ Puppet::Type.type(:php_version).provide(:php_source) do
       "--with-mysqli=mysqlnd",
       "--with-mysql=mysqlnd",
       "--with-pdo-mysql=mysqlnd",
+
+      "--with-apxs2=/usr/sbin/apxs",
 
     ]
 
