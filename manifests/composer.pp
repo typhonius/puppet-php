@@ -38,4 +38,10 @@ class php::composer {
   file { $composer_path:
     mode => '0755'
   }
+
+  # Add composer global bin to $PATH
+  boxen::env_script { 'composer':
+    source => 'puppet:///modules/php/composer_global_bin.sh',
+    require => Exec['download-php-composer']
+  }
 }
