@@ -14,6 +14,7 @@ Requires the following boxen modules:
 * `pcre`
 * `libpng`
 * `mysql`
+* `openssl`
 
 The following boxen modules are required if optional PHP extensions are used:
 
