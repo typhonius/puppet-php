@@ -259,7 +259,7 @@ Puppet::Type.type(:php_version).provide(:php_source) do
       "--with-gettext=#{@resource[:homebrew_path]}/opt/gettext",
       "--with-gmp=#{@resource[:homebrew_path]}/opt/gmp",
       "--with-zlib=#{@resource[:homebrew_path]}/opt/zlibphp",
-      "--with-snmp=/usr",
+      "--without-snmp",
       "--with-libedit",
       "--with-mhash",
       "--with-curl",
