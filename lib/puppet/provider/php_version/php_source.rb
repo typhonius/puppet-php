@@ -89,6 +89,10 @@ Puppet::Type.type(:php_version).provide(:php_source) do
     makefile = "#{@resource[:phpenv_root]}/php-src/Makefile"
     makefileOutdata = File.read(makefile).gsub(/^INSTALL_IT = \$\(mkinstalldirs\) '([^']+)' (.+) LIBEXECDIR=([^\s]+) (.+)$/, "INSTALL_IT = $(mkinstalldirs) '#{@resource[:phpenv_root]}/versions/#{@resource[:version]}/libexec/apache2' \\2 LIBEXECDIR='#{@resource[:phpenv_root]}/versions/#{@resource[:version]}/libexec/apache2' \\4")
 
+    # Fix for openssl when building 5.5
+    # Discussed here: https://github.com/Homebrew/homebrew-php/issues/1941
+    makefileOutdata = makefileOutdata.gsub(/^EXTRA_LIBS = (.*)/, "EXTRA_LIBS = \\1 #{@resource[:homebrew_path]}/opt/openssl/lib/libssl.dylib #{@resource[:homebrew_path]}/opt/openssl/lib/libcrypto.dylib")
+
     File.open(makefile, 'w') do |out|
       out << makefileOutdata
     end
