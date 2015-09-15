@@ -206,7 +206,9 @@ define php::project(
     #  try to use the same socket file.
     exec { "Clear FPM pool configs for ${name}":
       command => "find ${php::config::configdir}/*/pool.d -iname ${name}-*.conf -exec rm {} \\;",
-      path => '/bin:/usr/bin'
+      path => '/bin:/usr/bin',
+      # We don't care if this fails (in case there are no `pool.d` dirs)
+      returns => [0,1]
     } ->
 
     # Spin up a PHP-FPM pool for this project, listening on an Nginx socket
