@@ -85,6 +85,16 @@ Puppet::Type.type(:php_version).provide(:php_source) do
     puts "Installing PHP #{@resource[:version]}, this may take a while..."
     configure(version)
 
+    # Fix for openssl when building 5.5
+    # Discussed here: https://github.com/Homebrew/homebrew-php/issues/1941
+    #       and here: https://github.com/boxen/puppet-php/issues/78
+    makefile = "#{@resource[:phpenv_root]}/php-src/Makefile"
+    makefileOutdata = File.read(makefile).gsub(/^EXTRA_LIBS = (.*)/, "EXTRA_LIBS = \\1 #{@resource[:homebrew_path]}/opt/openssl/lib/libssl.dylib #{@resource[:homebrew_path]}/opt/openssl/lib/libcrypto.dylib")
+
+    File.open(makefile, 'w') do |out|
+      out << makefileOutdata
+    end
+
     # Make & install
     make
     make_install
