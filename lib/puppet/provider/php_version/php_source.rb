@@ -266,7 +266,7 @@ Puppet::Type.type(:php_version).provide(:php_source) do
       "--without-snmp",
       "--with-libedit",
       "--with-mhash",
-      "--with-curl=#{@resource[:homebrew_path]}/opt/curl",
+      "--with-curl-dir=#{@resource[:homebrew_path]}/opt/curl",
       "--with-openssl=#{@resource[:homebrew_path]}/opt/openssl",
       "--with-bz2=/usr",
 
