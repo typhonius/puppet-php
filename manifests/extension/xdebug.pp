@@ -9,7 +9,7 @@
 #
 define php::extension::xdebug(
   $php,
-  $version = '2.2.1'
+  $version = '2.4.0'
 ) {
   require php::config
   # Require php version eg. php::5_4_10
