@@ -143,7 +143,7 @@ define php::version(
         Package['boxen/brews/zlibphp'],
         Package['autoconf'],
         Package['boxen/brews/autoconf213'],
-        Package['homebrew/versions/openssl098'],
+        Package['homebrew/versions/openssl101'],
         Package['bzip2'],
         Package['curl'],
       ],
