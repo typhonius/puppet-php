@@ -264,9 +264,9 @@ Puppet::Type.type(:php_version).provide(:php_source) do
       "--with-snmp=/usr",
       "--with-libedit",
       "--with-mhash",
-      "--with-curl=#{@resource[:homebrew_path]}/opt/curl",
+      "--with-curl=/usr/bin/curl",
       "--with-openssl=#{@resource[:homebrew_path]}/opt/openssl101",
-      "--with-bz2=#{@resource[:homebrew_path]}/opt/bzip2",
+      "--with-bz2=/usr/bin/bzip2",
 
       "--with-mysql-sock=/tmp/mysql.sock",
       "--with-mysqli=mysqlnd",
