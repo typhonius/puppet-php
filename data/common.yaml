@@ -9,7 +9,7 @@ php::config::extensioncachedir: "%{php::config::datadir}/cache/extensions"
 php::config::configure_params:  {}
 php::config::composer:
   version:  '1.2.0'
-  checksum: 'ad898f510e1a7909fe251d2193a8cca1257e9dd4'
+  checksum: 'df47dc307fa614daa5a10423bdf4e1bb'
 php::config::phpenv:
   revision: '6499bb6c7b645af3f4e67f7e17708d5ee208453f'
 php::config::secure_versions:
