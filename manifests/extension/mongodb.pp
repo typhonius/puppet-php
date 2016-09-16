@@ -13,6 +13,9 @@ define php::extension::mongodb(
 ) {
   require php::config
 
+  # Resolve dependencies
+  ensure_packages( [ 'openssl', ] )
+
   # Get full patch version of PHP
   $patch_php_version = php_get_patch_version($php)
 
