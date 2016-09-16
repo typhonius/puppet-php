@@ -27,15 +27,19 @@ define php::extension::mongodb(
   # Final module install path
   $module_path  = "${php::config::root}/versions/${patch_php_version}/modules/${extension}.so"
 
+  # Additional options
+  $configure_params = "--with-openssl=${boxen::config::homebrewdir}/opt/openssl"
+
   php_extension { $name:
-    extension      => $extension,
-    version        => $version,
-    package_name   => $package_name,
-    package_url    => $url,
-    homebrew_path  => $boxen::config::homebrewdir,
-    phpenv_root    => $php::config::root,
-    php_version    => $patch_php_version,
-    cache_dir      => $php::config::extensioncachedir,
+    extension        => $extension,
+    version          => $version,
+    package_name     => $package_name,
+    package_url      => $url,
+    homebrew_path    => $boxen::config::homebrewdir,
+    phpenv_root      => $php::config::root,
+    php_version      => $patch_php_version,
+    cache_dir        => $php::config::extensioncachedir,
+    configure_params => $configure_params,
   }
 
   # Add config file once extension is installed
