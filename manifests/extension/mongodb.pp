@@ -20,12 +20,12 @@ define php::extension::mongodb(
   # This will compile, install and set up config dirs if not present
   php_require($patch_php_version)
 
-  $extension = 'mongodb'
+  $extension    = 'mongodb'
   $package_name = "mongodb-${version}"
-  $url = "http://pecl.php.net/get/mongodb-${version}.tgz"
+  $url          = "https://pecl.php.net/get/mongodb-${version}.tgz"
 
   # Final module install path
-  $module_path = "${php::config::root}/versions/${patch_php_version}/modules/${extension}.so"
+  $module_path  = "${php::config::root}/versions/${patch_php_version}/modules/${extension}.so"
 
   php_extension { $name:
     extension      => $extension,
@@ -39,7 +39,6 @@ define php::extension::mongodb(
   }
 
   # Add config file once extension is installed
-
   file { "${php::config::configdir}/${patch_php_version}/conf.d/${extension}.ini":
     content => template('php/extensions/generic.ini.erb'),
     require => Php_extension[$name],
