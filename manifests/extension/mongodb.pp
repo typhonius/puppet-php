@@ -12,9 +12,7 @@ define php::extension::mongodb(
   $version = '1.1.8'
 ) {
   require php::config
-
-  # Resolve dependencies
-  ensure_packages( [ 'openssl', ] )
+  require openssl
 
   # Get full patch version of PHP
   $patch_php_version = php_get_patch_version($php)
