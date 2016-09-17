@@ -8,8 +8,8 @@ php::config::cachedir:          "%{php::config::datadir}/cache"
 php::config::extensioncachedir: "%{php::config::datadir}/cache/extensions"
 php::config::configure_params:  {}
 php::config::composer:
-  version:  '1.0.0-alpha10'
-  checksum: 'dea8681b6f54dca9bb3a5b7deb179cca'
+  version:  '1.2.1'
+  checksum: '2e232b14055952d1c4e026fdec5ed882'
 php::config::phpenv:
   revision: '6499bb6c7b645af3f4e67f7e17708d5ee208453f'
 php::config::secure_versions:
