@@ -2,55 +2,57 @@
 #
 # Usage:
 #
-#     php::extension::couchbase { 'couchbase for 5.4.10':
+#     php::extension::uopz { 'uopz for 5.4.10':
 #       php     => '5.4.10',
-#       version => '1.1.2'
+#       version => '1.0.3'
 #     }
 #
-define php::extension::couchbase(
+define php::extension::uopz(
   $php,
-  $version = '1.1.2'
+  $version = '2.0.6'
 ) {
-  require couchbase::lib
-
+  include boxen::config
   require php::config
+
+  # Get full patch version of PHP
+  $patch_php_version = php_get_patch_version($php)
+
   # Require php version eg. php::5_4_10
   # This will compile, install and set up config dirs if not present
-  php_require($php)
+  php_require($patch_php_version)
 
-  $extension = 'couchbase'
+  $extension = 'uopz'
 
   # Final module install path
   $module_path = "${php::config::root}/versions/${php}/modules/${extension}.so"
 
-  # Clone the source repository
+  # Clone the source respository
   # Use ensure_resource, because if you directly use the repository type, it
   # will result in duplicate resource errors when installing the extension in
   # two different PHP versions.
   ensure_resource(
     'repository',
-    "${php::config::extensioncachedir}/couchbase",
+    "${php::config::extensioncachedir}/uopz",
     {
-      source => 'couchbase/php-ext-couchbase'
+      source => 'krakjoe/uopz'
     }
   )
 
   # Additional options
-  $configure_params = "--with-couchbase=${boxen::config::homebrewdir}/opt/libcouchbase"
+  $configure_params = ''
 
-  # Build & install the extension
   php_extension { $name:
     provider         => 'git',
 
     extension        => $extension,
-    version          => $version,
+    version          => "v${version}",
 
     homebrew_path    => $boxen::config::homebrewdir,
     phpenv_root      => $php::config::root,
     php_version      => $php,
 
     cache_dir        => $php::config::extensioncachedir,
-    require          => Repository["${php::config::extensioncachedir}/couchbase"],
+    require          => Repository["${php::config::extensioncachedir}/uopz"],
 
     configure_params => $configure_params,
   }
@@ -58,9 +60,8 @@ define php::extension::couchbase(
   # Add config file once extension is installed
 
   file { "${php::config::configdir}/${php}/conf.d/${extension}.ini":
-    content => template('php/extensions/generic.ini.erb'),
+    content => template('php/extensions/zend_generic.ini.erb'),
     require => Php_extension[$name],
   }
 
 }
-
