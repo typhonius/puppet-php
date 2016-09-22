@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe "php::extension::mongodb" do
-  #let(:pre_condition) { "class couchbase::lib {}" }
   let(:facts) { default_test_facts }
   let(:title) { "mongodb for 5.6.26" }
   let(:params) do
