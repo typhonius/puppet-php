@@ -24,9 +24,16 @@ define php::extension::couchbase(
   $module_path = "${php::config::root}/versions/${php}/modules/${extension}.so"
 
   # Clone the source repository
-  repository { "${php::config::extensioncachedir}/couchbase":
-    source => 'couchbase/php-ext-couchbase'
-  }
+  # Use ensure_resource, because if you directly use the repository type, it
+  # will result in duplicate resource errors when installing the extension in
+  # two different PHP versions.
+  ensure_resource(
+    'repository',
+    "${php::config::extensioncachedir}/couchbase",
+    {
+      source => 'couchbase/php-ext-couchbase'
+    }
+  )
 
   # Additional options
   $configure_params = "--with-couchbase=${boxen::config::homebrewdir}/opt/libcouchbase"

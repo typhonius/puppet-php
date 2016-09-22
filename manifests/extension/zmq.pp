@@ -24,9 +24,16 @@ define php::extension::zmq(
   $module_path = "${php::config::root}/versions/${php}/modules/${extension}.so"
 
   # Clone the source repository
-  repository { "${php::config::extensioncachedir}/zmq":
-    source => 'mkoppanen/php-zmq'
-  }
+  # Use ensure_resource, because if you directly use the repository type, it
+  # will result in duplicate resource errors when installing the extension in
+  # two different PHP versions.
+  ensure_resource(
+    'repository',
+    "${php::config::extensioncachedir}/zmq",
+    {
+      source => 'mkoppanen/php-zmq'
+    }
+  )
 
   # Build & install the extension
   php_extension { $name:
