@@ -105,6 +105,7 @@ define php::version(
     }
 
     # Set up config files
+    $socket = "/tmp/mysql.sock"
     file { $php_ini:
       content => template('php/php.ini.erb'),
       require => File[$version_config_root]
