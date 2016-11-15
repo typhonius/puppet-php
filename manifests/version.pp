@@ -105,7 +105,6 @@ define php::version(
     }
 
     # Set up config files
-    $socket = hiera('mysql::socket')
     file { $php_ini:
       content => template('php/php.ini.erb'),
       require => File[$version_config_root]
