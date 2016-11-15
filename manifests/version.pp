@@ -9,7 +9,6 @@ define php::version(
   $version  = $name
 ) {
   require php
-  include mysql::config
 
   # Current supported and secure versions
   $secure_5_6 = $php::config::secure_versions['5.6']
@@ -106,6 +105,7 @@ define php::version(
     }
 
     # Set up config files
+    $socket = hiera('mysql::socket')
     file { $php_ini:
       content => template('php/php.ini.erb'),
       require => File[$version_config_root]

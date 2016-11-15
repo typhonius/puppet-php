@@ -1013,7 +1013,7 @@ pdo_mysql.cache_size = 2000
 ; Default socket name for local MySQL connects.  If empty, uses the built-in
 ; MySQL defaults.
 ; http://php.net/pdo_mysql.default-socket
-pdo_mysql.default_socket=<%= scope.lookupvar('::mysql::config::socket') %>
+pdo_mysql.default_socket=<%= scope.lookupvar('socket') %>
 
 [Phar]
 ; http://php.net/phar.readonly
@@ -1226,7 +1226,7 @@ mysqli.default_port = 3306
 ; Default socket name for local MySQL connects.  If empty, uses the built-in
 ; MySQL defaults.
 ; http://php.net/mysqli.default-socket
-mysqli.default_socket =<%= scope.lookupvar('::mysql::config::socket') %>
+mysqli.default_socket =<%= scope.lookupvar('php::version::socket') %>
 
 ; Default host for mysql_connect() (doesn't apply in safe mode).
 ; http://php.net/mysqli.default-host
