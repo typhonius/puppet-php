@@ -1004,7 +1004,6 @@ date.timezone = UTC
 ;pdo_odbc.connection_pooling=strict
 
 ;pdo_odbc.db2_instance_name
-
 <% if @mysql %>
 [Pdo_mysql]
 ; If mysqlnd is used: Number of cache slots for the internal result set cache
@@ -1015,7 +1014,7 @@ pdo_mysql.cache_size = 2000
 ; MySQL defaults.
 ; http://php.net/pdo_mysql.default-socket
 pdo_mysql.default_socket=<%= scope.lookupvar('::mysql::config::socket') %>
-<% end -%>
+<% end %>
 [Phar]
 ; http://php.net/phar.readonly
 ;phar.readonly = On
@@ -1136,7 +1135,6 @@ ibase.dateformat = "%Y-%m-%d"
 
 ; Default time format.
 ibase.timeformat = "%H:%M:%S"
-
 <% if @mysql %>
 [MySQL]
 ; Allow accessing, from PHP's perspective, local files with LOAD DATA statements
@@ -1268,7 +1266,7 @@ mysqlnd.collect_memory_statistics = Off
 ; bytes.
 ; http://php.net/mysqlnd.net_read_buffer_size
 ;mysqlnd.net_read_buffer_size = 32768
-<% end -%>
+<% end %>
 [OCI8]
 
 ; Connection: Enables privileged connections using external
