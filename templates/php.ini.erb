@@ -1016,7 +1016,6 @@ pdo_mysql.cache_size = 2000
 ; http://php.net/pdo_mysql.default-socket
 pdo_mysql.default_socket=<%= scope.lookupvar('::mysql::config::socket') %>
 <% end -%>
-
 [Phar]
 ; http://php.net/phar.readonly
 ;phar.readonly = On
@@ -1270,7 +1269,6 @@ mysqlnd.collect_memory_statistics = Off
 ; http://php.net/mysqlnd.net_read_buffer_size
 ;mysqlnd.net_read_buffer_size = 32768
 <% end -%>
-
 [OCI8]
 
 ; Connection: Enables privileged connections using external
