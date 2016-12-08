@@ -32,6 +32,7 @@ class php::composer {
     command => "curl -sS -o ${composer_path} ${composer_url}",
     unless  => "[ -f ${composer_path} ] && [ \"`md5 -q ${composer_path}`\" = \"${composer_checksum}\" ]",
     cwd     => $php::config::root,
+    loglevel => 'debug',
     require => Exec['phpenv-setup-root-repo']
   } ->
 
