@@ -170,7 +170,7 @@ Puppet::Type.type(:php_version).provide(:php_source) do
 
     # PHP 5.5+ requires a later version of Bison than OSX provides (2.6 vs 2.3)
     if Gem::Version.new(@resource[:version]) > Gem::Version.new('5.4.17')
-      env << " && export PATH=/opt/boxen/homebrew/opt/bisonphp26/bin:$PATH"
+      env << " && export PATH=/usr/local/opt/bisonphp26/bin:$PATH"
     end
 
     # Construct and run configure command
