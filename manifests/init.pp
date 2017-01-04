@@ -18,6 +18,7 @@ class php {
   include pkgconfig
   include pcre
   include libpng
+  include openssl
 
   # Get rid of any pre-installed packages
   package { ['phpenv', 'php-build']: ensure => absent; }
@@ -85,6 +86,13 @@ class php {
   package { 'boxen/brews/autoconf213':
     ensure => '2.13-boxen1',
   }
+
+  # El Capitan doesn't provide Openssl dev resources any more, so use OpenSSL
+  # from Homebrew (with all the headers and things) in order to build PHP
+  package { 'homebrew/versions/openssl098':
+    ensure => absent
+  }
+  package { 'homebrew/versions/openssl101': }
 
   # PHP 5.5 drops support for Bison 2.3 which is shipped with OSX
   # Therefore need a later version, which we'll again sandbox just for this
