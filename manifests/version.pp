@@ -142,7 +142,7 @@ define php::version(
         Package['mcrypt'],
         Package['boxen/brews/zlibphp'],
         Package['autoconf'],
-        Package['homebrew/versions/openssl101'],
+        Package['homebrew/versions/openssl'],
         Package['boxen/brews/autoconf213'],
       ],
       notify            => Exec["phpenv-rehash-post-install-${patch_version}"],

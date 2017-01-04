@@ -92,7 +92,7 @@ class php {
   package { 'homebrew/versions/openssl098':
     ensure => absent
   }
-  package { 'homebrew/versions/openssl101': }
+  package { 'homebrew/versions/openssl': }
 
   # PHP 5.5 drops support for Bison 2.3 which is shipped with OSX
   # Therefore need a later version, which we'll again sandbox just for this
