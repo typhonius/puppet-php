@@ -26,7 +26,7 @@ define php::extension::mongodb(
   $module_path  = "${php::config::root}/versions/${php}/modules/${extension}.so"
 
   # Additional options
-  $configure_params = "--with-openssl-dir=${boxen::config::homebrewdir}/opt/openssl"
+  $configure_params = "--with-openssl-dir=${boxen::config::homebrewdir}/opt/openssl101"
 
   php_extension { $name:
     extension        => $extension,
