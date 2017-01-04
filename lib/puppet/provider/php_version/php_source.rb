@@ -256,6 +256,8 @@ Puppet::Type.type(:php_version).provide(:php_source) do
       "--with-mhash",
       "--with-curl",
       "--with-openssl=#{@resource[:homebrew_path]}/opt/openssl",
+      "-I #{@resource[:homebrew_path]}/opt/openssl/include",
+      "-L #{@resource[:homebrew_path]}/opt/openssl/lib",
       "--with-bz2=/usr",
 
       "--with-mysql-sock=/tmp/mysql.sock",
