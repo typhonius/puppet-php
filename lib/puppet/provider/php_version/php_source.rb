@@ -260,7 +260,6 @@ Puppet::Type.type(:php_version).provide(:php_source) do
 
       "--with-mysql-sock=/tmp/mysql.sock",
       "--with-mysqli=mysqlnd",
-      "--with-mysql=mysqlnd",
       "--with-pdo-mysql=mysqlnd",
 
     ]
