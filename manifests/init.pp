@@ -18,6 +18,7 @@ class php {
   include pkgconfig
   include pcre
   include libpng
+  include openssl
 
   # Get rid of any pre-installed packages
   package { ['phpenv', 'php-build']: ensure => absent; }
@@ -61,7 +62,7 @@ class php {
   }
 
   # Resolve dependencies
-  ensure_packages( [ 'libevent', 'gmp', 'icu4c', 'jpeg', 'mcrypt', ] )
+  ensure_packages( [ 'libevent', 'gmp', 'icu4c', 'jpeg', 'mcrypt', 'curl', ] )
 
   # Install freetype version 2.4.11 due to conflict with GD
   # See https://github.com/boxen/puppet-php/issues/25

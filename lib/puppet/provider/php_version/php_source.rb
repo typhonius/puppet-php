@@ -268,17 +268,18 @@ Puppet::Type.type(:php_version).provide(:php_source) do
       "--with-mhash",
       "--with-curl=#{@resource[:homebrew_path]}/opt/curl",
       "--with-openssl=#{@resource[:homebrew_path]}/opt/openssl",
-      "--with-libxml-dir=#{@resource[:homebrew_path]}/opt/libxml2",
       "--with-bz2=/usr",
 
       "--with-mysql-sock=/tmp/mysql.sock",
       "--with-mysqli=mysqlnd",
-      "--with-mysql=mysqlnd",
       "--with-pdo-mysql=mysqlnd",
 
-      "--with-apxs2=/usr/sbin/apxs",
-
     ]
+
+    # with-mysql isn't available after PHP 7.
+    if Gem::Version.new(@resource[:version]) < Gem::Version.new('7.0.0')
+      args << "--with-mysql=mysqlnd"
+    end
 
     # PHP-FPM isn't available until 5.3.3
     if Gem::Version.new(@resource[:version]) > Gem::Version.new('5.3.2')
