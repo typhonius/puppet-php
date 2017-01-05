@@ -18,6 +18,9 @@ class php {
   include pkgconfig
   include pcre
   include libpng
+  include openssl
+  include libxml2
+  include curl
 
   # Get rid of any pre-installed packages
   package { ['phpenv', 'php-build']: ensure => absent; }
