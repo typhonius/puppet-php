@@ -63,7 +63,7 @@ class php {
   }
 
   # Resolve dependencies
-  ensure_packages( [ 'libevent', 'gmp', 'icu4c', 'jpeg', 'mcrypt', ] )
+  ensure_packages( [ 'libevent', 'gmp', 'icu4c', 'jpeg', 'mcrypt', 'curl', ] )
 
   # Install freetype version 2.4.11 due to conflict with GD
   # See https://github.com/boxen/puppet-php/issues/25
