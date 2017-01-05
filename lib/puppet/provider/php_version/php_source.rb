@@ -168,6 +168,12 @@ Puppet::Type.type(:php_version).provide(:php_source) do
     # Some env variables are needed for configuration
     env = "export ac_cv_exeext=''"
 
+    # Add OpenSSL includes to the environment variables.
+    env << " && export CPATH=#{@resource[:homebrew_path]}/opt/openssl/include"
+    env << " && export LIBRARY_PATH=#{@resource[:homebrew_path]}/opt/openssl/lib"
+    env << " && export LD_LIBRARY_PATH=#{@resource[:homebrew_path]}/opt/openssl/lib"
+    env << " && export PKG_CONFIG_PATH=#{@resource[:homebrew_path]}/opt/openssl/lib/pkgconfig"
+
     # PHP 5.5+ requires a later version of Bison than OSX provides (2.6 vs 2.3)
     if Gem::Version.new(@resource[:version]) > Gem::Version.new('5.4.17')
       env << " && export PATH=/usr/local/opt/bisonphp26/bin:$PATH"
@@ -256,8 +262,6 @@ Puppet::Type.type(:php_version).provide(:php_source) do
       "--with-mhash",
       "--with-curl",
       "--with-openssl=#{@resource[:homebrew_path]}/opt/openssl",
-      "-I #{@resource[:homebrew_path]}/opt/openssl/include",
-      "-L #{@resource[:homebrew_path]}/opt/openssl/lib",
       "--with-bz2=/usr",
 
       "--with-mysql-sock=/tmp/mysql.sock",

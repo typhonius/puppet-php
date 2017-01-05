@@ -6,7 +6,8 @@ php::config::datadir:           "%{::boxen::config::datadir}/php"
 php::config::pluginsdir:        "%{php::config::root}/plugins"
 php::config::cachedir:          "%{php::config::datadir}/cache"
 php::config::extensioncachedir: "%{php::config::datadir}/cache/extensions"
-php::config::configure_params: {'-I': "%{::homebrew_path}/opt/openssl/include", '-L': "%{::homebrew_path}/opt/openssl/lib"}
+php::config::configure_params: { }
+
 php::config::composer:
   version:  '1.2.1'
   checksum: '2e232b14055952d1c4e026fdec5ed882'
