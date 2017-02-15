@@ -60,6 +60,8 @@ describe "php::version" do
           "Package[boxen/brews/zlibphp]",
           "Package[autoconf]",
           "Package[boxen/brews/autoconf213]",
+          "Package[openssl]",
+          "Package[curl]",
         ],
         :notify        => "Exec[phpenv-rehash-post-install-5.4.17]",
       })
