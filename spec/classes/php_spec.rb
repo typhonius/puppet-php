@@ -88,7 +88,7 @@ describe "php" do
     })
 
     should contain_package("boxen/brews/zlibphp").with({
-      :ensure => "1.2.8-boxen1"
+      :ensure => "1.2.11-boxen1"
     })
 
     should contain_homebrew__formula("bisonphp26").with({

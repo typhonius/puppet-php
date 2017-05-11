@@ -115,7 +115,7 @@ class php {
   }
 
   package { 'boxen/brews/zlibphp':
-    ensure => '1.2.8-boxen1',
+    ensure => '1.2.11-boxen1',
   }
 
   # Set up phpenv
