@@ -153,7 +153,14 @@ describe "php::project" do
       })
     end
 
-    it { should contain_mysql__db("a_database_name") }
+    it do
+      should contain_mysql__db("a_database_name")
+
+      should contain_file("/test/boxen/config/php/5.4.17/php.ini").with({
+        :content => File.read("spec/fixtures/php-with-mysql.ini"),
+        :require => "File[/test/boxen/config/php/5.4.17]"
+      })
+    end
   end
 
   context "nginx => php/nginx/nginx.conf.erb" do

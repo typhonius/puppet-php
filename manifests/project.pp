@@ -143,6 +143,7 @@ define php::project(
   }
 
   if $mysql {
+    include mysql::config
     $mysql_dbs = $mysql ? {
       true    => ["${name}_development", "${name}_test"],
       default => $mysql,
